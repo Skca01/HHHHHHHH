@@ -29,6 +29,8 @@
             position: relative;
             margin: 0;
             padding: 0;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
 
         h1 {
@@ -97,6 +99,120 @@
                 opacity: 1; 
                 transform: translateY(0) scale(1); 
             }
+        }
+
+        .intro {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ff6b9d, #f8bbd9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            z-index: 1000;
+            padding: clamp(20px, 5vw, 30px);
+            box-sizing: border-box;
+        }
+
+        .intro.hidden {
+            opacity: 0;
+            transform: scale(0.95);
+            pointer-events: none;
+        }
+
+        .intro h1 {
+            font-family: "Great Vibes", cursive;
+            font-size: clamp(24px, 7vw, 40px);
+            text-align: center;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            margin-bottom: 15px;
+            position: static;
+            transform: none;
+            opacity: 1;
+        }
+
+        .intro p {
+            font-family: "Dancing Script", cursive;
+            font-size: clamp(16px, 4.5vw, 20px);
+            text-align: center;
+            max-width: 90%;
+            margin: 15px 0;
+            line-height: 1.4;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .intro button {
+            padding: clamp(10px, 3vw, 12px) clamp(20px, 5vw, 25px);
+            font-size: clamp(14px, 4vw, 18px);
+            font-family: "Dancing Script", cursive;
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            border: none;
+            border-radius: 50px;
+            color: #fff;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            min-width: 120px;
+            min-height: 44px;
+        }
+
+        .intro button:hover,
+        .intro button:active {
+            transform: scale(1.05);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .main-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            z-index: 10;
+            box-sizing: border-box;
+        }
+
+        .main-content.visible {
+            display: block;
+            opacity: 1;
+        }
+
+        .music-control {
+            position: fixed;
+            top: 8px;
+            right: 8px;
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            z-index: 1100;
+        }
+
+        .music-control.play::before {
+            content: '▶';
+            font-size: 14px;
+            color: #fff;
+        }
+
+        .music-control.pause::before {
+            content: '❚❚';
+            font-size: 14px;
+            color: #fff;
+        }
+
+        .music-control:hover,
+        .music-control:active {
+            background: rgba(255, 255, 255, 0.5);
         }
 
         .sunflwr {
@@ -579,29 +695,47 @@
     </style>
 </head>
 <body>
-    <h1 id="title">Click on the center flower</h1>
     <audio id="backgroundMusic" loop>
         <source src="blue.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
 
-    <div class="sunflwr">
-        <div class="sunflwr__leaf--left"></div>
-        <div class="sunflwr__leaf--right"></div>
-        <div class="sunflwr__stem"></div>
-        <div class="sunflwr__center initial"></div>
-        <div class="sunflwr__pedal--1"></div>
-        <div class="sunflwr__pedal--2"></div>
-        <div class="sunflwr__pedal--3"></div>
-        <div class="sunflwr__pedal--4"></div>
-        <div class="sunflwr__pedal--5"></div>
-        <div class="sunflwr__pedal--6"></div>
-        <div class="sunflwr__pedal--7"></div>
-        <div class="sunflwr__pedal--8"></div>
-        <div class="sunflwr__pedal--9"></div>
-        <div class="sunflwr__pedal--10"></div>
-        <div class="sunflwr__pedal--11"></div>
-        <div class="sunflwr__pedal--12"></div>
+    <div class="intro" id="garden-intro">
+        <h1>Hayts Petchay gyud, limot2 man😌</h1>
+        <p>Thankful gihapon ko HAHAHAHAHA</p>
+        <p>Bali 10 na ka pics make sure nga mo appear tanan, ayaw pud pag silent.</p>
+        <p>Nganu mo cry2 man ey😭 Nahan gyud ko mo ara unta ay😭</p>
+        <p>Take it slow po, thankssss😘.</p>
+        <button onclick="startGarden()">Begin the Garden of You</button>
+        <div class="heart" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="heart" style="left: 25%; animation-delay: 0.5s;"></div>
+        <div class="heart" style="left: 40%; animation-delay: 1s;"></div>
+        <div class="heart" style="left: 55%; animation-delay: 1.5s;"></div>
+        <div class="heart" style="left: 70%; animation-delay: 2s;"></div>
+        <div class="heart" style="left: 85%; animation-delay: 2.5s;"></div>
+    </div>
+
+    <div class="main-content" id="main-content">
+        <div class="music-control pause" id="music-control" onclick="toggleMusic()"></div>
+        <h1 id="title">Click on the center flower</h1>
+        <div class="sunflwr">
+            <div class="sunflwr__leaf--left"></div>
+            <div class="sunflwr__leaf--right"></div>
+            <div class="sunflwr__stem"></div>
+            <div class="sunflwr__center initial"></div>
+            <div class="sunflwr__pedal--1"></div>
+            <div class="sunflwr__pedal--2"></div>
+            <div class="sunflwr__pedal--3"></div>
+            <div class="sunflwr__pedal--4"></div>
+            <div class="sunflwr__pedal--5"></div>
+            <div class="sunflwr__pedal--6"></div>
+            <div class="sunflwr__pedal--7"></div>
+            <div class="sunflwr__pedal--8"></div>
+            <div class="sunflwr__pedal--9"></div>
+            <div class="sunflwr__pedal--10"></div>
+            <div class="sunflwr__pedal--11"></div>
+            <div class="sunflwr__pedal--12"></div>
+        </div>
     </div>
 
     <script>
@@ -665,6 +799,8 @@
             let gardenStarted = false;
             let gardenComplete = false;
             let positionIndex = 0;
+            let lastInteractionTime = 0;
+            const debounceTime = 300;
 
             function getFlowerPositions() {
                 return [
@@ -967,24 +1103,43 @@
                 setTimeout(displayNextMessage, 1500);
             }
 
-            function startGarden() {
-                if (gardenStarted) return;
-                gardenStarted = true;
-                const initialCenter = document.querySelector('.sunflwr__center.initial');
-                if (initialCenter) {
-                    initialCenter.classList.remove('initial');
-                }
-                const title = document.querySelector('#title');
-                if (title) {
-                    title.innerHTML = 'Happy Monthsary Shy💕<br><small>Every tap shows how beautiful you are🥰💕</small>';
-                }
-                const music = document.getElementById('backgroundMusic');
-                if (music) {
-                    music.play().catch(error => {
-                        console.log("Audio playback failed:", error);
-                    });
+            function toggleMusic() {
+                const audio = document.getElementById('backgroundMusic');
+                const control = document.getElementById('music-control');
+                if (audio.paused) {
+                    audio.play().catch(e => console.log('Audio play failed:', e));
+                    control.classList.remove('play');
+                    control.classList.add('pause');
+                } else {
+                    audio.pause();
+                    control.classList.remove('pause');
+                    control.classList.add('play');
                 }
             }
+
+            function startGarden() {
+                document.getElementById('garden-intro').classList.add('hidden');
+                const mainContent = document.getElementById('main-content');
+                setTimeout(() => {
+                    mainContent.classList.add('visible');
+                    gardenStarted = true;
+                    const initialCenter = document.querySelector('.sunflwr__center.initial');
+                    if (initialCenter) {
+                        initialCenter.classList.remove('initial');
+                    }
+                    const title = document.querySelector('#title');
+                    if (title) {
+                        title.innerHTML = 'Happy Monthsary Shy💕<br><small>Every tap shows how beautiful you are🥰💕</small>';
+                    }
+                    const audio = document.getElementById('backgroundMusic');
+                    audio.play().catch(e => console.log('Audio play failed:', e));
+                    const control = document.getElementById('music-control');
+                    control.classList.remove('play');
+                    control.classList.add('pause');
+                }, 500);
+            }
+
+            window.startGarden = startGarden;
 
             function growFlower(clickX, clickY) {
                 if (gardenComplete) {
@@ -1073,35 +1228,36 @@
                 }
             }
 
-            document.addEventListener('click', (e) => {
-                if (e.target.classList.contains('initial')) {
-                    e.stopPropagation();
-                    startGarden();
-                    createHeart(e.clientX, e.clientY);
-                    createSparkle(e.clientX, e.clientY);
+            function handleInteraction(x, y, target) {
+                const currentTime = Date.now();
+                if (currentTime - lastInteractionTime < debounceTime) {
+                    return;
+                }
+                lastInteractionTime = currentTime;
+
+                if (target.classList.contains('initial')) {
+                    createHeart(x, y);
+                    createSparkle(x, y);
                     return;
                 }
                 
                 if (gardenStarted) {
-                    growFlower(e.clientX, e.clientY);
+                    growFlower(x, y);
                 }
+            }
+
+            document.addEventListener('click', (e) => {
+                if ('ontouchstart' in window) return;
+                if (e.target.classList.contains('music-control') || e.target.tagName === 'BUTTON') return;
+                handleInteraction(e.clientX, e.clientY, e.target);
             });
 
             document.addEventListener('touchstart', (e) => {
+                if (e.target.classList.contains('music-control') || e.target.tagName === 'BUTTON') return;
                 e.preventDefault();
                 const touch = e.touches[0];
-                if (e.target.classList.contains('initial')) {
-                    e.stopPropagation();
-                    startGarden();
-                    createHeart(touch.clientX, touch.clientY);
-                    createSparkle(touch.clientX, touch.clientY);
-                    return;
-                }
-                
-                if (gardenStarted) {
-                    growFlower(touch.clientX, touch.clientY);
-                }
-            });
+                handleInteraction(touch.clientX, touch.clientY, e.target);
+            }, { passive: false });
 
             setInterval(() => {
                 createSparkle(
