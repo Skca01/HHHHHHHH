@@ -832,6 +832,52 @@
             100% { opacity: 0; transform: scale(0.5); }
         }
 
+        .countdown-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 107, 157, 0.95), rgba(240, 147, 251, 0.95));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 4000;
+            padding: clamp(20px, 5vw, 30px);
+            box-sizing: border-box;
+        }
+
+        .countdown-overlay.hidden {
+            display: none;
+        }
+
+        .countdown-overlay h1 {
+            font-family: "Great Vibes", cursive;
+            font-size: clamp(24px, 7vw, 40px);
+            text-align: center;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            margin-bottom: 15px;
+        }
+
+        .countdown-overlay p {
+            font-family: "Dancing Script", cursive;
+            font-size: clamp(16px, 4.5vw, 20px);
+            text-align: center;
+            max-width: 90%;
+            margin: 15px 0;
+            line-height: 1.4;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .countdown-timer {
+            font-family: "Dancing Script", cursive;
+            font-size: clamp(18px, 5vw, 24px);
+            color: #fff;
+            text-align: center;
+            margin: 15px 0;
+        }
+
         @media (max-width: 600px) {
             .memory-grid {
                 grid-template-columns: repeat(3, 1fr);
@@ -869,10 +915,21 @@
                 font-size: clamp(14px, 4vw, 18px);
                 padding: 8px;
             }
+
+            .countdown-timer {
+                font-size: clamp(16px, 4.5vw, 20px);
+            }
         }
     </style>
 </head>
 <body>
+    <div class="countdown-overlay" id="countdown-overlay">
+        <h1>Huwat sa daw HAHAHHAHAHA</h1>
+        <p>Unlock on May 26, 2025, at 12:00 AM PHT</p>
+        <p>E refresh nya ug 12:00am na nya dili ma access, thankssss😘</p>
+        <div class="countdown-timer" id="countdown-timer">Counting down...</div>
+    </div>
+
     <audio id="heart-audio" loop>
         <source src="romantic_piano.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
@@ -986,7 +1043,7 @@
         </div>
 
         <div class="constellation-container" id="constellation-puzzle" style="display: none;">
-            <div class="music-control pause" id="constellation-music-control" onclick="toggleMusic('constellation')"></div>
+            <div class="music sócontrol pause" id="constellation-music-control" onclick="toggleMusic('constellation')"></div>
             <div class="constellation-canvas" id="constellation-canvas"></div>
             <div class="message-text" id="message-text"></div>
             <div class="success-message" id="constellation-success">Our love's message shines bright! 💖</div>
@@ -1023,6 +1080,40 @@
     </div>
 
     <script>
+        const targetDate = new Date('2025-05-26T00:00:00+08:00').getTime();
+        const countdownOverlay = document.getElementById('countdown-overlay');
+        const countdownTimer = document.getElementById('countdown-timer');
+        const heartIntro = document.getElementById('heart-intro');
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance <= 0) {
+                countdownOverlay.classList.add('hidden');
+                heartIntro.style.display = 'flex';
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            countdownTimer.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+            setTimeout(updateCountdown, 1000);
+        }
+
+        if (new Date().getTime() < targetDate) {
+            countdownOverlay.style.display = 'flex';
+            heartIntro.style.display = 'none';
+            updateCountdown();
+        } else {
+            countdownOverlay.classList.add('hidden');
+            heartIntro.style.display = 'flex';
+        }
+
         let tapCount = 0;
         let currentPuzzle = 'heart';
         let puzzleSequence = ['heart', 'memory', 'constellation', 'letter'];
